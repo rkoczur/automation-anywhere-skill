@@ -1,0 +1,9 @@
+  1  Comment "COMMON_notify_users - reads a CSV of recipients and emails each one a status line. Author: RPA team."
+  2  Step "READ RECIPIENTS"
+  3    CsvTxt: OpenCSVTXT [filePath="file:///C:/RPA/temp/recipients.csv", session="Default"]
+  4    Number: Assign  to $nbrSentCount$
+  5  Loop: forEachRowInCSVTXT -> $recCurrentRow$
+  6    Microsoft 365 Outlook: Connect
+  7    Microsoft 365 Outlook: Send email to  - Subject: "Daily status"
+  8    Number: Assign  to $nbrSentCount$
+  9  [disabled] MessageBox: messageBox [message="Sent $nbrSentCount$ mails"]

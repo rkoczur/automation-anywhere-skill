@@ -1,0 +1,78 @@
+{
+  "automation_name": "COMMON_notify_users",
+  "review_date": "2026-07-28",
+  "score": 54,
+  "verdict_band": "Poor — significant rework required",
+  "threshold_profile": "default (this skill)",
+  "bots_analyzed_list": "COMMON_notify_users (9 lines)",
+  "total_automation_size": 9,
+  "config_overrides": "none",
+  "counts": { "blocker": 7, "major": 3, "minor": 2, "info": 1 },
+  "violation_line_ratio": 78,
+  "mi": 64,
+  "duplication_ratio": 0,
+  "metrics": [
+    {
+      "bot": "COMMON_notify_users", "lines": 9, "cc": 2,
+      "halstead_v": "~146", "mi": 64, "duplication": 0,
+      "tech_mix": "Native only (Outlook M365, CSV)"
+    }
+  ],
+  "findings": [
+    { "rule_id": "R20", "rule_name": "No literal credentials", "severity": "blocker",
+      "count": 1, "locations": "L6",
+      "message": "clientSecret is a hard-coded literal ('S3cr3tValueInline!') — must come from the Credential Vault." },
+    { "rule_id": "R03", "rule_name": "Error handling on external I/O", "severity": "blocker",
+      "count": 1, "locations": "L1–L9",
+      "message": "No Try/Catch anywhere; the Outlook send and CSV read can fail unhandled." },
+    { "rule_id": "R14", "rule_name": "No hard-coded file paths", "severity": "major",
+      "count": 1, "locations": "L4",
+      "message": "Absolute path 'C:/RPA/temp/recipients.csv' is machine-specific — move to a Config input." },
+    { "rule_id": "R15", "rule_name": "No hard-coded endpoints/addresses", "severity": "major",
+      "count": 1, "locations": "L7",
+      "message": "Sender 'rpa-noreply@example.com' is typed inline — externalise to Config." },
+    { "rule_id": "R09", "rule_name": "No disabled actions left in place", "severity": "minor",
+      "count": 1, "locations": "L8",
+      "message": "A disabled Message Box is left in the flow — remove dead steps before release." },
+    { "rule_id": "R11", "rule_name": "No unused variables", "severity": "minor",
+      "count": 1, "locations": "—",
+      "message": "Variable 'strUnusedFlag' is declared but never read." }
+  ],
+  "catalogue": [
+    { "rule_id": "R01", "rule_name": "Automation size within limit", "severity": "info", "threshold": "\u2264 5000 actions", "status": "pass", "count": 0 },
+    { "rule_id": "R02", "rule_name": "Cyclomatic complexity within limit", "severity": "major", "threshold": "\u2264 15 per bot", "status": "pass", "count": 0 },
+    { "rule_id": "R03", "rule_name": "Error handling on external I/O", "severity": "blocker", "threshold": "Try/Catch around I/O", "status": "fail", "count": 1 },
+    { "rule_id": "R04", "rule_name": "Loops are bounded", "severity": "blocker", "threshold": "no unbounded While", "status": "pass", "count": 0 },
+    { "rule_id": "R05", "rule_name": "No infinite retry", "severity": "major", "threshold": "retry cap present", "status": "na", "count": 0 },
+    { "rule_id": "R06", "rule_name": "Reuse shared components", "severity": "minor", "threshold": "no copy-paste blocks", "status": "pass", "count": 0 },
+    { "rule_id": "R07", "rule_name": "Meaningful variable names", "severity": "minor", "threshold": "typed prefixes", "status": "pass", "count": 0 },
+    { "rule_id": "R08", "rule_name": "Comments / Step labels present", "severity": "minor", "threshold": "\u2265 1 per logical block", "status": "pass", "count": 0 },
+    { "rule_id": "R09", "rule_name": "No disabled actions left in place", "severity": "minor", "threshold": "0 disabled nodes", "status": "fail", "count": 1 },
+    { "rule_id": "R10", "rule_name": "No dead/unreachable branches", "severity": "minor", "threshold": "0 dead branches", "status": "pass", "count": 0 },
+    { "rule_id": "R11", "rule_name": "No unused variables", "severity": "minor", "threshold": "0 unused", "status": "fail", "count": 1 },
+    { "rule_id": "R12", "rule_name": "Sessions closed / disconnected", "severity": "major", "threshold": "every Connect has Disconnect", "status": "pass", "count": 0 },
+    { "rule_id": "R13", "rule_name": "Explicit waits, not fixed delays", "severity": "minor", "threshold": "no bare Delay", "status": "na", "count": 0 },
+    { "rule_id": "R14", "rule_name": "No hard-coded file paths", "severity": "major", "threshold": "paths from Config", "status": "fail", "count": 1 },
+    { "rule_id": "R15", "rule_name": "No hard-coded endpoints/addresses", "severity": "major", "threshold": "endpoints from Config", "status": "fail", "count": 1 },
+    { "rule_id": "R16", "rule_name": "No secrets in variables/logs", "severity": "blocker", "threshold": "no secret literals logged", "status": "pass", "count": 0 },
+    { "rule_id": "R17", "rule_name": "Logging present on key steps", "severity": "minor", "threshold": "\u2265 1 log per run", "status": "fail", "count": 1 },
+    { "rule_id": "R18", "rule_name": "No sensitive data in Message Box", "severity": "major", "threshold": "no PII in prompts", "status": "pass", "count": 0 },
+    { "rule_id": "R19", "rule_name": "Inputs validated before use", "severity": "major", "threshold": "guard on external input", "status": "fail", "count": 1 },
+    { "rule_id": "R20", "rule_name": "No literal credentials", "severity": "blocker", "threshold": "Credential Vault only", "status": "fail", "count": 1 },
+    { "rule_id": "R21", "rule_name": "Child bots exist and resolve", "severity": "blocker", "threshold": "all runTask targets valid", "status": "na", "count": 0 },
+    { "rule_id": "R22", "rule_name": "No credentials passed as plain args", "severity": "blocker", "threshold": "vault refs across bots", "status": "na", "count": 0 },
+    { "rule_id": "R23", "rule_name": "Consistent error propagation", "severity": "major", "threshold": "Throw or log-and-stop", "status": "fail", "count": 1 }
+  ],
+  "fixes": [
+    "Secure the mailbox credentials — replace the typed-in client secret at line 6 with a Credential Vault lookup so the secret never lives in the bot.",
+    "Wrap the CSV read and the Outlook send (lines 4–7) in a Try/Catch, and log the failure, so a bad file or a mail outage doesn't crash the run silently.",
+    "Move the recipients file path (line 4) and the sender address (line 7) out of the bot and into Config inputs, so the same bot runs unchanged across machines and environments.",
+    "Validate the recipients file before looping — check it exists and has rows — so an empty or missing file gives a clear message instead of a mid-run error.",
+    "Delete the disabled Message Box (line 8) and the unused 'strUnusedFlag' variable so the flow only contains steps that actually run."
+  ],
+  "positives": [
+    "The loop is a bounded CSV row iterator — no infinite-loop risk (R04 passes).",
+    "The Outlook session is disconnected at the end, so no orphaned connections are left open (R12 passes).",
+    "Variables use typed prefixes (strSubject, strUnusedFlag), keeping intent readable (R07 passes)."
+  ]
+}

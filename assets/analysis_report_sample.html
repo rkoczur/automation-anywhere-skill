@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<!--
+  A360 Bot Analysis Report — HTML template
+  =========================================
+  Rendered output of the code-analysis workflow described in A360_ANALYSIS_GUIDE.md.
+
+  How to use
+  ----------
+  * Replace every double-brace token with real values.
+  * Blocks that repeat (metric rows, rule findings, catalogue rows, fix items,
+    positive observations) are marked with between comment REPEAT: name.
+    Clone the inner element once per item and substitute its tokens.
+  * Severity → status color is driven by a `data-sev` attribute
+    (blocker | major | minor | info | pass). Set it and the colors follow.
+  * Metric-band tinting is driven by `data-band` (good | moderate | poor | bad).
+  * Colors come from the dataviz reference status palette; a status color is
+    never used alone — every badge also carries an icon glyph and a text label.
+
+  The sample content below is the COMMON_notify_users review (score 54/100) so the
+  layout is visible; overwrite it with your data.
+-->
+<html lang="en" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A360 Bot Review — COMMON_notify_users</title>
+<style>
+  :root {
+    color-scheme: light;
+    /* surfaces & ink (dataviz reference palette, light) */
+    --page:            #f9f9f7;
+    --surface-1:       #fcfcfb;
+    --surface-2:       #f3f2ee;
+    --text-primary:    #0b0b0b;
+    --text-secondary:  #52514e;
+    --text-muted:      #898781;
+    --hairline:        rgba(11,11,11,0.10);
+    --gridline:        #e1e0d9;
+    /* status palette (fixed — never themed) */
+    --good:      #0ca30c;
+    --warning:   #fab219;
+    --serious:   #ec835a;
+    --critical:  #d03b3b;
+    /* sequential blue (for meters / accents) */
+    --accent:    #2a78d6;
+    --accent-100:#cde2fb;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:            #0d0d0d;
+    --surface-1:       #1a1a19;
+    --surface-2:       #232321;
+    --text-primary:    #ffffff;
+    --text-secondary:  #c3c2b7;
+    --text-muted:      #898781;
+    --hairline:        rgba(255,255,255,0.10);
+    --gridline:        #2c2c2a;
+    --accent:    #3987e5;
+    --accent-100:#184f95;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page:            #0d0d0d;
+      --surface-1:       #1a1a19;
+      --surface-2:       #232321;
+      --text-primary:    #ffffff;
+      --text-secondary:  #c3c2b7;
+      --text-muted:      #898781;
+      --hairline:        rgba(255,255,255,0.10);
+      --gridline:        #2c2c2a;
+      --accent:    #3987e5;
+      --accent-100:#184f95;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  a { color: var(--accent); }
+  h1, h2, h3 { line-height: 1.2; font-weight: 650; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 {
+    font-size: 1.15rem; margin: 36px 0 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .muted { color: var(--text-muted); }
+  .secondary { color: var(--text-secondary); }
+  code, .mono { font-family: ui-monospace, "Cascadia Code", "Consolas", monospace; }
+
+  /* ---------- header ---------- */
+  .report-head {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center;
+    justify-content: space-between;
+    background: var(--surface-1);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+  }
+  .report-head .titles { min-width: 240px; }
+  .toolbar { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    font: inherit; font-size: .85rem; cursor: pointer;
+    background: var(--surface-2); color: var(--text-secondary);
+    border: 1px solid var(--hairline); border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .btn:hover { color: var(--text-primary); }
+
+  /* score dial */
+  .score {
+    display: flex; align-items: center; gap: 18px;
+  }
+  .score-ring {
+    --pct: 54;            /* 0–100, drives the arc */
+    width: 96px; height: 96px; border-radius: 50%;
+    background:
+      conic-gradient(var(--score-color) calc(var(--pct) * 1%), var(--gridline) 0);
+    display: grid; place-items: center;
+    flex: 0 0 auto;
+  }
+  .score-ring .inner {
+    width: 74px; height: 74px; border-radius: 50%;
+    background: var(--surface-1); display: grid; place-items: center;
+    text-align: center;
+  }
+  .score-ring .num { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score-ring .den { font-size: .7rem; }
+  .verdict {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 650; font-size: 1rem;
+  }
+  .verdict .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--score-color); }
+
+  /* ---------- stat tiles ---------- */
+  .tiles {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px; margin-top: 20px;
+  }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--hairline);
+    border-radius: var(--radius); padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 4px;
+    border-top: 3px solid var(--tile-color, var(--gridline));
+  }
+  .tile .val { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tile .lbl { font-size: .8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .tile[data-sev="blocker"] { --tile-color: var(--critical); }
+  .tile[data-sev="major"]   { --tile-color: var(--serious); }
+  .tile[data-sev="minor"]   { --tile-color: var(--warning); }
+  .tile[data-sev="info"]    { --tile-color: var(--good); }
+
+  /* ---------- generic cards & tables ---------- */
+  .card {
+    background: var(--surface-1); border: 1px solid var(--hairline);
+    border-radius: var(--radius); padding: 4px 4px; overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { text-align: left; padding: 11px 14px; vertical-align: top; }
+  thead th {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--text-muted); font-weight: 600;
+    border-bottom: 1px solid var(--hairline);
+  }
+  tbody tr + tr td { border-top: 1px solid var(--gridline); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--surface-2); }
+
+  /* ---------- severity badge ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    font-size: .74rem; font-weight: 650; letter-spacing: .02em;
+    padding: 3px 9px 3px 7px; border-radius: 999px;
+    border: 1px solid transparent;
+  }
+  .badge .ico { font-size: .8em; line-height: 1; }
+  /* status color as fill/edge, always accompanied by the text label + icon */
+  .badge[data-sev="blocker"] { color: #fff; background: var(--critical); }
+  .badge[data-sev="major"]   { color: #3a1a06; background: var(--serious); }
+  .badge[data-sev="minor"]   { color: #3a2a00; background: var(--warning); }
+  .badge[data-sev="info"]    { color: #fff; background: var(--good); }
+  .badge[data-sev="pass"]    { color: var(--good); background: transparent; border-color: var(--good); }
+  :root[data-theme="dark"] .badge[data-sev="major"],
+  :root[data-theme="dark"] .badge[data-sev="minor"] { color: #0d0d0d; }
+
+  /* rule row: keep detail readable in ink, not the status color */
+  td .rule-id { font-weight: 650; }
+  td .rule-name { color: var(--text-secondary); }
+  .loc { font-family: ui-monospace, monospace; font-size: .82rem; color: var(--text-secondary); }
+
+  /* ---------- meters ---------- */
+  .meters { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .meter {
+    background: var(--surface-1); border: 1px solid var(--hairline);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .meter .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .meter .name { font-weight: 600; font-size: .9rem; }
+  .meter .figure { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .track { height: 10px; border-radius: 999px; background: var(--gridline); overflow: hidden; }
+  .fill { height: 100%; border-radius: 999px; background: var(--meter-color, var(--accent)); width: var(--w, 0%); }
+  .meter[data-band="good"]     { --meter-color: var(--good); }
+  .meter[data-band="moderate"] { --meter-color: var(--accent); }
+  .meter[data-band="poor"]     { --meter-color: var(--serious); }
+  .meter[data-band="bad"]      { --meter-color: var(--critical); }
+  .meter .scale { display: flex; justify-content: space-between; font-size: .72rem; color: var(--text-muted); margin-top: 6px; }
+
+  /* ---------- config / meta grid ---------- */
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 28px; }
+  .meta-grid .k { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+  .meta-grid .v { font-size: .95rem; }
+
+  /* ---------- lists ---------- */
+  ol.fixes, ul.positives { padding-left: 0; list-style: none; margin: 0; }
+  ol.fixes li, ul.positives li {
+    background: var(--surface-1); border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  ol.fixes { counter-reset: fix; }
+  ol.fixes li::before {
+    counter-increment: fix; content: counter(fix);
+    flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: .8rem; font-weight: 700;
+    display: grid; place-items: center;
+  }
+  ul.positives li::before { content: "✓"; color: var(--good); font-weight: 700; flex: 0 0 auto; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0 0; font-size: .78rem; color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; }
+
+  footer { margin-top: 48px; font-size: .78rem; color: var(--text-muted); text-align: center; }
+
+  /* ---------- print ---------- */
+  @media print {
+    :root { --page: #fff; --surface-1: #fff; --surface-2: #fff; }
+    body { color: #000; }
+    .toolbar { display: none; }
+    .card, .tile, .meter, .report-head, ol.fixes li, ul.positives li { border-color: #bbb; }
+    h2 { break-after: avoid; }
+    tr, .tile, .meter { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============================ HEADER ============================ -->
+  <header class="report-head">
+    <div class="titles">
+      <h1>Bot Review — COMMON_notify_users</h1>
+      <div class="secondary">1 bot(s) · 9 lines · reviewed 2026-07-28</div>
+      <div class="verdict" style="--score-color: var(--serious); margin-top:10px;">
+        <span class="dot"></span>Poor — significant rework required
+      </div>
+    </div>
+
+    <div class="score">
+      <!-- --score-color: good ≥90 / accent 75–89 / warning 60–74 / serious 40–59 / critical <40 -->
+      <div class="score-ring" style="--score-color: var(--serious);">
+        <div class="inner">
+          <div class="num">54</div>
+          <div class="den muted">/ 100</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="themeToggle" type="button">◐ Theme</button>
+        <button class="btn" onclick="window.print()" type="button">⎙ Print</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================ SUMMARY TILES ============================ -->
+  <div class="tiles">
+    <div class="tile" data-sev="blocker">
+      <div class="val">7</div>
+      <div class="lbl"><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></div>
+    </div>
+    <div class="tile" data-sev="major">
+      <div class="val">3</div>
+      <div class="lbl"><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></div>
+    </div>
+    <div class="tile" data-sev="minor">
+      <div class="val">2</div>
+      <div class="lbl"><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></div>
+    </div>
+    <div class="tile" data-sev="info">
+      <div class="val">1</div>
+      <div class="lbl"><span class="badge" data-sev="info"><span class="ico">●</span>Info</span></div>
+    </div>
+    <div class="tile">
+      <div class="val">78%</div>
+      <div class="lbl">Violation-line ratio</div>
+    </div>
+  </div>
+
+  <!-- ============================ CONFIGURATION ============================ -->
+  <h2>Configuration</h2>
+  <div class="card" style="padding:18px 20px;">
+    <div class="meta-grid">
+      <div><div class="k">Thresholds used</div><div class="v">default (this skill)</div></div>
+      <div><div class="k">Bots analyzed</div><div class="v">COMMON_notify_users (9 lines)</div></div>
+      <div><div class="k">Total automation size</div><div class="v">9 lines</div></div>
+      <div><div class="k">Overrides</div><div class="v">none</div></div>
+    </div>
+  </div>
+
+  <!-- ============================ METRICS ============================ -->
+  <h2>Objective metrics</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Bot</th>
+          <th class="num">Lines</th>
+          <th class="num">CC</th>
+          <th class="num">Halstead V</th>
+          <th class="num">MI</th>
+          <th class="num">Duplication</th>
+          <th>Tech mix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>COMMON_notify_users</td>
+          <td class="num">9</td>
+          <td class="num">2</td>
+          <td class="num">~146</td>
+          <td class="num">64</td>
+          <td class="num">0%</td>
+          <td>Native only (Outlook M365, CSV)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- meters: quick-read of the automation-level headline metrics -->
+  <div class="meters" style="margin-top:18px;">
+    <!-- Maintainability Index: 0–100, higher better. band: good ≥85 / moderate 65–84 / poor 40–64 / bad <40 -->
+    <div class="meter" data-band="poor">
+      <div class="head"><span class="name">Maintainability index</span><span class="figure">64</span></div>
+      <div class="track"><div class="fill" style="--w: 64%;"></div></div>
+      <div class="scale"><span>0 · very poor</span><span>100 · highly maintainable</span></div>
+    </div>
+    <!-- Duplication ratio: lower better. band: good <5 / poor 5–15 / bad >15 -->
+    <div class="meter" data-band="good">
+      <div class="head"><span class="name">Code duplication</span><span class="figure">0%</span></div>
+      <div class="track"><div class="fill" style="--w: 0%;"></div></div>
+      <div class="scale"><span>0% · clean</span><span>&gt;15% · extract</span></div>
+    </div>
+    <!-- Violation-line ratio: lower better. band: good <5 / poor 5–25 / bad >25 -->
+    <div class="meter" data-band="bad">
+      <div class="head"><span class="name">Violation-line ratio</span><span class="figure">78%</span></div>
+      <div class="track"><div class="fill" style="--w: 78%;"></div></div>
+      <div class="scale"><span>0%</span><span>100%</span></div>
+    </div>
+  </div>
+
+  <!-- ============================ RULE FINDINGS ============================ -->
+  <h2>Rule findings</h2>
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--critical)"></span>Blocker — production risk</span>
+    <span><span class="swatch" style="background:var(--serious)"></span>Major — should fix</span>
+    <span><span class="swatch" style="background:var(--warning)"></span>Minor — style</span>
+    <span><span class="swatch" style="background:var(--good)"></span>Info — advisory</span>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Rule</th>
+          <th>Severity</th>
+          <th class="num">Count</th>
+          <th>Location(s)</th>
+          <th>Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rule-id">R20</span> · <span class="rule-name">No literal credentials</span></td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="num">1</td>
+          <td class="loc">L6</td>
+          <td>clientSecret is a hard-coded literal (&#x27;S3cr3tValueInline!&#x27;) — must come from the Credential Vault.</td>
+        </tr>
+        <tr>
+          <td><span class="rule-id">R03</span> · <span class="rule-name">Error handling on external I/O</span></td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="num">1</td>
+          <td class="loc">L1–L9</td>
+          <td>No Try/Catch anywhere; the Outlook send and CSV read can fail unhandled.</td>
+        </tr>
+        <tr>
+          <td><span class="rule-id">R14</span> · <span class="rule-name">No hard-coded file paths</span></td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="num">1</td>
+          <td class="loc">L4</td>
+          <td>Absolute path &#x27;C:/RPA/temp/recipients.csv&#x27; is machine-specific — move to a Config input.</td>
+        </tr>
+        <tr>
+          <td><span class="rule-id">R15</span> · <span class="rule-name">No hard-coded endpoints/addresses</span></td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="num">1</td>
+          <td class="loc">L7</td>
+          <td>Sender &#x27;rpa-noreply@example.com&#x27; is typed inline — externalise to Config.</td>
+        </tr>
+        <tr>
+          <td><span class="rule-id">R09</span> · <span class="rule-name">No disabled actions left in place</span></td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="num">1</td>
+          <td class="loc">L8</td>
+          <td>A disabled Message Box is left in the flow — remove dead steps before release.</td>
+        </tr>
+        <tr>
+          <td><span class="rule-id">R11</span> · <span class="rule-name">No unused variables</span></td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="num">1</td>
+          <td class="loc">—</td>
+          <td>Variable &#x27;strUnusedFlag&#x27; is declared but never read.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================ RULE CATALOGUE (all 23) ============================ -->
+  <h2>Full rule catalogue</h2>
+  <p class="secondary" style="margin-top:-6px;">Every rule evaluated, whether or not it produced a finding. See <code>A360_ANALYSIS_GUIDE.md</code> §3 for detection recipes.</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Rule</th>
+          <th>Severity</th>
+          <th>Threshold</th>
+          <th>Status</th>
+          <th class="num">Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">R01</td>
+          <td>Automation size within limit</td>
+          <td><span class="badge" data-sev="info"><span class="ico">●</span>Info</span></td>
+          <td class="secondary">≤ 5000 actions</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R02</td>
+          <td>Cyclomatic complexity within limit</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">≤ 15 per bot</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R03</td>
+          <td>Error handling on external I/O</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">Try/Catch around I/O</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R04</td>
+          <td>Loops are bounded</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">no unbounded While</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R05</td>
+          <td>No infinite retry</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">retry cap present</td>
+          <td><span class="badge" data-sev="info"><span class="ico">–</span>N/A</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R06</td>
+          <td>Reuse shared components</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">no copy-paste blocks</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R07</td>
+          <td>Meaningful variable names</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">typed prefixes</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R08</td>
+          <td>Comments / Step labels present</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">≥ 1 per logical block</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R09</td>
+          <td>No disabled actions left in place</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">0 disabled nodes</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R10</td>
+          <td>No dead/unreachable branches</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">0 dead branches</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R11</td>
+          <td>No unused variables</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">0 unused</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R12</td>
+          <td>Sessions closed / disconnected</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">every Connect has Disconnect</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R13</td>
+          <td>Explicit waits, not fixed delays</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">no bare Delay</td>
+          <td><span class="badge" data-sev="info"><span class="ico">–</span>N/A</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R14</td>
+          <td>No hard-coded file paths</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">paths from Config</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R15</td>
+          <td>No hard-coded endpoints/addresses</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">endpoints from Config</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R16</td>
+          <td>No secrets in variables/logs</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">no secret literals logged</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R17</td>
+          <td>Logging present on key steps</td>
+          <td><span class="badge" data-sev="minor"><span class="ico">◆</span>Minor</span></td>
+          <td class="secondary">≥ 1 log per run</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R18</td>
+          <td>No sensitive data in Message Box</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">no PII in prompts</td>
+          <td><span class="badge" data-sev="pass"><span class="ico">✓</span>Pass</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R19</td>
+          <td>Inputs validated before use</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">guard on external input</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R20</td>
+          <td>No literal credentials</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">Credential Vault only</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+        <tr>
+          <td class="mono">R21</td>
+          <td>Child bots exist and resolve</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">all runTask targets valid</td>
+          <td><span class="badge" data-sev="info"><span class="ico">–</span>N/A</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R22</td>
+          <td>No credentials passed as plain args</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">■</span>Blocker</span></td>
+          <td class="secondary">vault refs across bots</td>
+          <td><span class="badge" data-sev="info"><span class="ico">–</span>N/A</span></td>
+          <td class="num">0</td>
+        </tr>
+        <tr>
+          <td class="mono">R23</td>
+          <td>Consistent error propagation</td>
+          <td><span class="badge" data-sev="major"><span class="ico">▲</span>Major</span></td>
+          <td class="secondary">Throw or log-and-stop</td>
+          <td><span class="badge" data-sev="blocker"><span class="ico">✕</span>Fail</span></td>
+          <td class="num">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================ TOP FIXES ============================ -->
+  <h2>Top concrete fixes</h2>
+  <ol class="fixes">
+    <li><div>Secure the mailbox credentials — replace the typed-in client secret at line 6 with a Credential Vault lookup so the secret never lives in the bot.</div></li>
+    <li><div>Wrap the CSV read and the Outlook send (lines 4–7) in a Try/Catch, and log the failure, so a bad file or a mail outage doesn&#x27;t crash the run silently.</div></li>
+    <li><div>Move the recipients file path (line 4) and the sender address (line 7) out of the bot and into Config inputs, so the same bot runs unchanged across machines and environments.</div></li>
+    <li><div>Validate the recipients file before looping — check it exists and has rows — so an empty or missing file gives a clear message instead of a mid-run error.</div></li>
+    <li><div>Delete the disabled Message Box (line 8) and the unused &#x27;strUnusedFlag&#x27; variable so the flow only contains steps that actually run.</div></li>
+  </ol>
+
+  <!-- ============================ POSITIVES ============================ -->
+  <h2>Positive observations</h2>
+  <ul class="positives">
+    <li><div>The loop is a bounded CSV row iterator — no infinite-loop risk (R04 passes).</div></li>
+    <li><div>The Outlook session is disconnected at the end, so no orphaned connections are left open (R12 passes).</div></li>
+    <li><div>Variables use typed prefixes (strSubject, strUnusedFlag), keeping intent readable (R07 passes).</div></li>
+  </ul>
+
+  <footer>
+    Generated by the <code>automation-anywhere-parser</code> skill · rules per <code>A360_ANALYSIS_GUIDE.md</code> · 2026-07-28
+  </footer>
+</div>
+
+<script>
+  // Theme toggle: light ⇄ dark, overriding the OS preference.
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    function current() {
+      if (root.dataset.theme) return root.dataset.theme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn && btn.addEventListener('click', function () {
+      root.dataset.theme = current() === 'dark' ? 'light' : 'dark';
+    });
+  })();
+</script>
+</body>
+</html>

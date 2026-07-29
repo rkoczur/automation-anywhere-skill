@@ -1,0 +1,158 @@
+{
+  "triggers": [],
+  "nodes": [
+    {
+      "uid": "n1-comment-header",
+      "commandName": "Comment",
+      "packageName": "Comment",
+      "disabled": false,
+      "attributes": [
+        { "name": "comment",
+          "value": { "type": "STRING", "string": "COMMON_notify_users - reads a CSV of recipients and emails each one a status line. Author: RPA team." } }
+      ]
+    },
+    {
+      "uid": "n2-step-init",
+      "commandName": "step",
+      "packageName": "Step",
+      "disabled": false,
+      "attributes": [
+        { "name": "title", "value": { "type": "STRING", "string": "READ RECIPIENTS" } }
+      ],
+      "children": [
+        {
+          "uid": "n3-open-csv",
+          "commandName": "OpenCSVTXT",
+          "packageName": "CsvTxt",
+          "disabled": false,
+          "attributes": [
+            { "name": "filePath",
+              "value": { "type": "FILE", "string": "file:///C:/RPA/temp/recipients.csv" } },
+            { "name": "session", "value": { "type": "STRING", "string": "Default" } }
+          ]
+        },
+        {
+          "uid": "n4-assign-count",
+          "commandName": "assignToNumber",
+          "packageName": "Number",
+          "disabled": false,
+          "attributes": [
+            { "name": "value", "value": { "type": "NUMBER", "number": "0" } }
+          ],
+          "returnTo": { "type": "VARIABLE", "variableName": "nbrSentCount" }
+        }
+      ]
+    },
+    {
+      "uid": "n5-loop",
+      "commandName": "loop.commands.start",
+      "packageName": "Loop",
+      "disabled": false,
+      "attributes": [
+        { "name": "loopType", "value": { "type": "STRING", "string": "ITERATOR" } },
+        { "name": "iterator",
+          "returnTo": { "type": "VARIABLE", "variableName": "recCurrentRow" },
+          "attributes": [
+            { "name": "session", "value": { "type": "STRING", "string": "Default" } }
+          ],
+          "value": { "type": "ITERATOR", "iteratorName": "loop.iterators.forEachRowInCSVTXT", "packageName": "Loop" }
+        }
+      ],
+      "children": [
+        {
+          "uid": "n6-connect-outlook",
+          "commandName": "Connect",
+          "packageName": "Microsoft 365 Outlook",
+          "disabled": false,
+          "attributes": [
+            { "name": "clientId", "value": { "type": "STRING", "string": "8f2c-not-a-secret-1234" } },
+            { "name": "clientSecret", "value": { "type": "STRING", "string": "S3cr3tValueInline!" } },
+            { "name": "session", "value": { "type": "STRING", "string": "ssnOutlook" } }
+          ]
+        },
+        {
+          "uid": "n7-send",
+          "commandName": "Send",
+          "packageName": "Microsoft 365 Outlook",
+          "disabled": false,
+          "attributes": [
+            { "name": "to", "value": { "type": "STRING", "expression": "$recCurrentRow[0]$" } },
+            { "name": "from", "value": { "type": "STRING", "string": "rpa-noreply@example.com" } },
+            { "name": "subject", "value": { "type": "STRING", "string": "Daily status" } },
+            { "name": "body", "value": { "type": "STRING", "expression": "Hello $recCurrentRow[1]$, your job finished." } },
+            { "name": "session", "value": { "type": "STRING", "string": "ssnOutlook" } }
+          ]
+        },
+        {
+          "uid": "n8-incr",
+          "commandName": "assignToNumber",
+          "packageName": "Number",
+          "disabled": false,
+          "attributes": [
+            { "name": "value", "value": { "type": "NUMBER", "expression": "$nbrSentCount$+1" } }
+          ],
+          "returnTo": { "type": "VARIABLE", "variableName": "nbrSentCount" }
+        }
+      ]
+    },
+    {
+      "uid": "n9-disabled-msgbox",
+      "commandName": "messageBox",
+      "packageName": "MessageBox",
+      "disabled": true,
+      "attributes": [
+        { "name": "message", "value": { "type": "STRING", "expression": "Sent $nbrSentCount$ mails" } }
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "name": "nbrSentCount",
+      "description": "",
+      "type": "NUMBER",
+      "readOnly": false,
+      "input": false,
+      "output": true,
+      "constant": false,
+      "defaultValue": { "type": "NUMBER", "number": "0" }
+    },
+    {
+      "name": "recCurrentRow",
+      "description": "",
+      "type": "RECORD",
+      "readOnly": false,
+      "input": false,
+      "output": false,
+      "constant": false,
+      "defaultValue": { "type": "RECORD" }
+    },
+    {
+      "name": "strUnusedFlag",
+      "description": "",
+      "type": "STRING",
+      "readOnly": false,
+      "input": false,
+      "output": false,
+      "constant": false,
+      "defaultValue": { "type": "STRING", "string": "" }
+    }
+  ],
+  "packages": [
+    { "name": "Comment", "version": "2.17.0", "settingsAttributes": [] },
+    { "name": "Step", "version": "2.7.0", "settingsAttributes": [] },
+    { "name": "CsvTxt", "version": "3.9.0", "settingsAttributes": [] },
+    { "name": "Number", "version": "3.2.0", "settingsAttributes": [] },
+    { "name": "Loop", "version": "3.4.0", "settingsAttributes": [] },
+    { "name": "Microsoft 365 Outlook", "version": "1.13.0", "settingsAttributes": [] },
+    { "name": "MessageBox", "version": "2.5.0", "settingsAttributes": [] }
+  ],
+  "properties": {
+    "botCodeVersion": "7",
+    "improvedNumberSupport": true,
+    "timeout": "0s",
+    "automationPriority": "PRIORITY_MEDIUM",
+    "runInChildWindow": false,
+    "runInChildWindowMode": "DESKTOP"
+  },
+  "workItemTemplateName": null
+}

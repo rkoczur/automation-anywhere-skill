@@ -1,0 +1,31 @@
+{
+  "skill_name": "automation-anywhere-parser",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Here's a bot one of our devs exported from the Control Room (sample_bot.json). I'm not deep on the RPA side — can you walk me through what this automation actually does, step by step, in plain English? Also which external systems does it touch?",
+      "expected_output": "A plain-language, ordered walkthrough: reads a CSV of recipients, loops over each row, connects to Outlook (M365 Graph), sends a status email per row, increments a counter. Should note external systems: a CSV file and Microsoft 365 Outlook. Should reflect the actual node order, not invent steps.",
+      "files": ["fixtures/sample_bot.json"],
+      "assertions": [
+        "Identifies that the bot reads a CSV file of recipients",
+        "Identifies that it loops over each row / recipient",
+        "Identifies that it connects to and sends email via Microsoft 365 Outlook",
+        "Names both external systems: the CSV file AND Microsoft 365 Outlook",
+        "Explanation follows the actual node order and does not invent steps",
+        "Written in plain, non-jargon language for a non-RPA reader"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Please do a code review / quality audit of sample_bot.json against our RPA standards and give it a score. Flag anything that would block us from putting this in production.",
+      "expected_output": "A structured review that finds the real issues: inline client secret / credentials not in the Vault (BLOCKER), no try/catch error handling around the send loop (BLOCKER), hard-coded CSV file path, hard-coded email address, a disabled action, an unused variable (strUnusedFlag). Should produce a 1-100 score with a verdict band and cite line numbers or node names. Should NOT hallucinate rules; ideally references the rule catalogue in A360_ANALYSIS_GUIDE.md.",
+      "files": ["fixtures/sample_bot.json"]
+    },
+    {
+      "id": 2,
+      "prompt": "In the A360 editor this bot shows an error on line 7. Which command node is that, and separately, what does the 'Send' command from the Microsoft 365 Outlook package expect for its attributes?",
+      "expected_output": "Correctly identifies editor line 7 by the depth-first walk (comment=1, step=2, OpenCSVTXT=3, assignToNumber=4, loop=5, Connect=6, Send=7) -> the Outlook 'Send' node (n7-send). Then describes the Send command's attributes (to/from/subject/body/session) drawing on A360_PACKAGES.md.",
+      "files": ["fixtures/sample_bot.json"]
+    }
+  ]
+}
