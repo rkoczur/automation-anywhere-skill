@@ -205,12 +205,12 @@ Notes:
 { "commandName": "replace", "packageName": "String",
   "attributes": [
     { "name": "sourceString",       "value": { "type": "STRING", "expression": "$vUserName$" } },
-    { "name": "find",               "value": { "type": "STRING", "string": "@corning.com" } },
+    { "name": "find",               "value": { "type": "STRING", "string": "@example.com" } },
     { "name": "isCaseSensitive",    "value": { "type": "STRING", "string": "false" } },
     { "name": "isRegularExpression","value": { "type": "STRING", "string": "false" } },
     { "name": "startIndex",         "value": { "type": "NUMBER", "number": "1"  } },
     { "name": "count",              "value": { "type": "NUMBER", "number": "-1" } },
-    { "name": "replaceWith",        "value": { "type": "STRING", "string": "@na.corning.com" } }
+    { "name": "replaceWith",        "value": { "type": "STRING", "string": "@na.example.com" } }
   ],
   "returnTo": { "type": "VARIABLE", "variableName": "vUsernameWithPlace" } }
 ```
@@ -1155,7 +1155,7 @@ name** (not a returned SESSION variable) reused by the other commands via
     { "name": "session",                     "value": { "type": "STRING", "string": "EmailSession" } },
     { "name": "serverType",                  "value": { "type": "STRING", "string": "EMAIL_SERVER" } },
     { "name": "useSecure",                   "value": { "type": "BOOLEAN", "boolean": false } },
-    { "name": "serverHost",                  "value": { "type": "STRING", "string": "smtp://smtp.corning.com" } },
+    { "name": "serverHost",                  "value": { "type": "STRING", "string": "smtp://smtp.example.com" } },
     { "name": "port",                        "value": { "type": "NUMBER", "number": "25" } },
     { "name": "protocol",                    "value": { "type": "STRING", "string": "POP3" } },
     { "name": "emailServerAuthType",         "value": { "type": "STRING", "string": "Basic" } },
@@ -1364,8 +1364,8 @@ Also common (same shape): `AddListItem`, `DeleteListItem`, `UploadFile`,
                                                             "isShared": true } } },
     { "name": "api",        "value": { "type": "STRING", "string": "sharePointAPI" } },
     { "name": "options",    "value": { "type": "STRING", "string": "cloud" } },
-    { "name": "subdomain",  "value": { "type": "STRING", "string": "corningonline" } },
-    { "name": "siteName",   "value": { "type": "STRING", "string": "SOX_audit" } },
+    { "name": "subdomain",  "value": { "type": "STRING", "string": "mycompany" } },
+    { "name": "siteName",   "value": { "type": "STRING", "string": "audit_site" } },
     { "name": "isTeams",    "value": { "type": "BOOLEAN", "boolean": false } }
   ],
   "returnTo": { "type": "SESSION",
@@ -1484,7 +1484,7 @@ takes `propertyName` + `propertyValue`.
   "attributes": [
     { "name": "session",        "value": { "type": "STRING", "string": "Default" } },
     { "name": "providerPath",   "value": { "type": "STRING", "string": "LDAP://domain/CN=user" } },
-    { "name": "userName",       "value": { "type": "STRING", "string": "user@corning.com" } },
+    { "name": "userName",       "value": { "type": "STRING", "string": "user@example.com" } },
     { "name": "userSecureText", "value": { "type": "STRING", "string": "Aa123445" } }
   ] }
 ```
@@ -1530,15 +1530,15 @@ Each user is a dictionary of `name` + `ldapPath`.
 ```json
 { "commandName": "createUser", "packageName": "ActiveDirectory",
   "attributes": [
-    { "name": "userName",          "value": { "type": "STRING", "string": "Attila" } },
-    { "name": "logonName",         "value": { "type": "STRING", "string": "attilaa" } },
-    { "name": "firstName",         "value": { "type": "STRING", "string": "Attila" } },
-    { "name": "lastName",          "value": { "type": "STRING", "string": "Alabas" } },
+    { "name": "userName",          "value": { "type": "STRING", "string": "Jane" } },
+    { "name": "logonName",         "value": { "type": "STRING", "string": "janed" } },
+    { "name": "firstName",         "value": { "type": "STRING", "string": "Jane" } },
+    { "name": "lastName",          "value": { "type": "STRING", "string": "Doe" } },
     { "name": "displayName",       "value": { "type": "STRING", "string": "" } },
     { "name": "initials",          "value": { "type": "STRING", "string": "" } },
-    { "name": "email",             "value": { "type": "STRING", "string": "attilaa@corning.com" } },
+    { "name": "email",             "value": { "type": "STRING", "string": "janed@example.com" } },
     { "name": "description",       "value": { "type": "STRING", "string": "" } },
-    { "name": "department",        "value": { "type": "STRING", "string": "RTP" } },
+    { "name": "department",        "value": { "type": "STRING", "string": "IT" } },
     { "name": "title",             "value": { "type": "STRING", "string": "Manager" } },
     { "name": "isActive",          "value": { "type": "BOOLEAN", "boolean": true } },
     { "name": "setAccountOptions", "value": { "type": "BOOLEAN", "boolean": false } },
@@ -1560,7 +1560,7 @@ All key the target the same way: `userNameOption` (`BY_LOGON_NAME` |
   "attributes": [
     { "name": "session",        "value": { "type": "STRING", "string": "Default" } },
     { "name": "userNameOption", "value": { "type": "STRING", "string": "BY_LOGON_NAME" } },
-    { "name": "logonName",      "value": { "type": "STRING", "string": "attilaa" } }
+    { "name": "logonName",      "value": { "type": "STRING", "string": "janed" } }
   ] }
 ```
 
@@ -1575,7 +1575,7 @@ adds `newName` + `renameUserOption`; `changeUserCredential` takes `userName` +
   "attributes": [
     { "name": "session",        "value": { "type": "STRING", "string": "Default" } },
     { "name": "userNameOption", "value": { "type": "STRING", "string": "BY_LOGON_NAME" } },
-    { "name": "logonName",      "value": { "type": "STRING", "string": "koczurr" } },
+    { "name": "logonName",      "value": { "type": "STRING", "string": "janed" } },
     { "name": "propertyName",   "value": { "type": "STRING", "string": "email" } }
   ],
   "returnTo": { "type": "VARIABLE", "variableName": "strUserEmail" } }
@@ -1584,9 +1584,9 @@ adds `newName` + `renameUserOption`; `changeUserCredential` takes `userName` +
   "attributes": [
     { "name": "session",        "value": { "type": "STRING", "string": "Default" } },
     { "name": "userNameOption", "value": { "type": "STRING", "string": "BY_LOGON_NAME" } },
-    { "name": "logonName",      "value": { "type": "STRING", "string": "koczurr" } },
+    { "name": "logonName",      "value": { "type": "STRING", "string": "janed" } },
     { "name": "propertyName",   "value": { "type": "STRING", "string": "email" } },
-    { "name": "propertyValue",  "value": { "type": "STRING", "string": "new.address@corning.com" } }
+    { "name": "propertyValue",  "value": { "type": "STRING", "string": "new.address@example.com" } }
   ] }
 ```
 
@@ -1650,7 +1650,7 @@ adds `newName` + `renameUserOption`; `changeUserCredential` takes `userName` +
   "attributes": [
     { "name": "openOption",   "value": { "type": "STRING", "string": "NEW_WIN" } },
     { "name": "browser",      "value": { "type": "STRING", "string": "CHROME" } },
-    { "name": "url",          "value": { "type": "STRING", "string": "http://www.corning.com" } },
+    { "name": "url",          "value": { "type": "STRING", "string": "http://www.example.com" } },
     { "name": "timeoutValue", "value": { "type": "NUMBER", "number": "240" } },
     { "name": "version",      "value": { "type": "NUMBER", "number": "3810" } }
   ] }
@@ -2514,7 +2514,7 @@ Common `databaseProvider`: `SQLOLEDB.1` (SQL Server), `Microsoft.ACE.OLEDB.12.0`
 ```json
 { "commandName": "sqlQuery", "packageName": "Database",
   "attributes": [
-    { "name": "query",        "value": { "type": "STRING", "string": "SELECT * FROM botlist WHERE owner = 'koczur'" } },
+    { "name": "query",        "value": { "type": "STRING", "string": "SELECT * FROM botlist WHERE owner = 'jsmith'" } },
     { "name": "fetchSize",    "value": { "type": "NUMBER", "number": "10" } },
     { "name": "doExport",     "value": { "type": "BOOLEAN", "boolean": true } },
     { "name": "filePath",     "value": { "type": "FILE", "string": "file:///c:/temp/query.csv" } },

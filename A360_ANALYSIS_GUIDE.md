@@ -6,9 +6,8 @@ two inputs:
 
 1. A **rule catalogue** (23 rules, each with a threshold, rationale, and a
    deterministic detection recipe against the JSON described in `SKILL.md`).
-2. The **Corning RPA Managed Service — Coding standard guidelines**
-   (P-CRNG-RPA-MS-Coding standards) — directory layout, variable naming,
-   commenting, logging, and version-control conventions.
+2. An **organizational RPA coding standard** — directory layout, variable
+   naming, commenting, logging, and version-control conventions.
 
 The two are integrated so that a single review pass can produce:
 
@@ -61,11 +60,11 @@ Given one or more TaskBot `.json` files, do this in order:
 
 All numeric thresholds are configurable. **Bold** values are the defaults
 used by this skill unless a user or a project override says otherwise. The
-"Corning standard" column shows the value from the P-CRNG-RPA-MS-Coding
-standards document where it differs.
+"Org standard" column shows an example value from a typical organizational
+coding standard where it differs.
 
-| Threshold                              | Default (this skill) | Corning standard | Rule |
-|----------------------------------------|:--------------------:|:----------------:|:----:|
+| Threshold                              | Default (this skill) | Org standard | Rule |
+|----------------------------------------|:--------------------:|:------------:|:----:|
 | Max actions per **automation**         | **5000**             | —                | R01  |
 | Max actions per **task bot**           | **300**              | 800              | R02  |
 | Max enabled actions per **Step**       | **50**               | 100              | R05  |
@@ -73,7 +72,7 @@ standards document where it differs.
 | Variable name **min length**           | **5**                | 5                | R09  |
 | Variable name **max length**           | **25**               | 25               | R09  |
 
-If the reviewing agent applies the Corning-standard numbers instead of
+If the reviewing agent applies the org-standard numbers instead of
 these defaults (e.g. when analysing legacy code), it must say so in the
 report's "Configuration" section.
 
@@ -179,7 +178,7 @@ Each rule has:
 
 * **Rule:** every variable name must match one of the naming patterns
   listed in §7.3 ("Variable naming pattern table"). Default patterns
-  come from the Corning coding standard (`<abbreviation><name><typeSuffix?>`
+  follow a common convention (`<abbreviation><name><typeSuffix?>`
   in camelCase).
 * **Detect:**
   1. Load the type-abbreviation table from §7.3.
@@ -276,7 +275,7 @@ Each rule has:
 * **Detect:** for each `try.branches[]` where `commandName == "catch"`,
   count non-Comment, non-disabled children.
 
-### R17 · Mandatory catch logging (MAJOR) *(Corning standard)*
+### R17 · Mandatory catch logging (MAJOR) *(org standard)*
 
 * **Rule:** every `catch` branch must contain a `LogToFile.logToFile`
   action **or** a `TaskBot.runTask` that calls the shared logger bot
@@ -284,7 +283,7 @@ Each rule has:
 * **Detect:** descendants of the catch branch include at least one of
   the two patterns above.
 
-### R18 · Mandatory catch line reference (MAJOR) *(Corning standard)*
+### R18 · Mandatory catch line reference (MAJOR) *(org standard)*
 
 * **Rule:** the catch's error variable-binding must capture the error
   line number.
@@ -307,19 +306,19 @@ Each rule has:
   * pass if `value.type == "CREDENTIAL"`,
   * violation otherwise.
 
-### R21 · Loops must be named (MINOR) *(Corning standard)*
+### R21 · Loops must be named (MINOR) *(org standard)*
 
 * **Rule:** every `loop.commands.start` should have an `anchor` label so
   nested `break` / `continue` unambiguously target it.
 * **Detect:** `anchor` present, non-empty, and unique within the bot.
 
-### R22 · Steps have descriptive uppercase titles (MINOR) *(Corning standard)*
+### R22 · Steps have descriptive uppercase titles (MINOR) *(org standard)*
 
 * **Rule:** every `step` node's `title` attribute must be non-empty,
   fully UPPERCASE, and at least 5 characters.
 * **Detect:** simple string check.
 
-### R23 · dev-mode step present (INFO) *(Corning standard)*
+### R23 · dev-mode step present (INFO) *(org standard)*
 
 * **Rule:** the bot should contain a `step` titled `DEV MODE` (or
   `DEV MODE - VARIABLE INITIALIZATION`) as its first executable step,
@@ -575,7 +574,7 @@ values):
   "review_date": "2026-07-28",
   "score": 54,                       // 0–100 (§5); drives the dial + its colour band
   "verdict_band": "Poor — significant rework required",   // §5.3
-  "threshold_profile": "default (this skill)",            // or "corning-standard" / "custom"
+  "threshold_profile": "default (this skill)",            // or "org-standard" / "custom"
   "bots_analyzed_list": "COMMON_notify_users (9 lines)",
   "total_automation_size": 9,
   "config_overrides": "none",

@@ -113,7 +113,7 @@ Per bot and aggregated for the whole automation
 
 - **23 coding-standard rules** (BLOCKER / MAJOR / MINOR / INFO) — try/catch
   coverage, no infinite loops, no literal credentials, named loops, descriptive
-  step titles, size limits, and more, including Corning-specific standards.
+  step titles, size limits, and more, including configurable organizational standards.
 - **Cyclomatic complexity** — decision-point count per bot (§4.2).
 - **Halstead volume / difficulty / effort** (§4.3).
 - **Maintainability index** (0–100, §4.4).

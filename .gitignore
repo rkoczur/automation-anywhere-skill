@@ -1,0 +1,6 @@
+# Claude Code local, machine-specific settings (contains absolute paths / usernames)
+.claude/settings.local.json
+.claude/*
+.vscode/*
+automation-anywhere-parser.zip
+automation-anywhere-parser.zip
