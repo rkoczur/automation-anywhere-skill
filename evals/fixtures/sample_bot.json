@@ -151,7 +151,7 @@
     "improvedNumberSupport": true,
     "timeout": "0s",
     "automationPriority": "PRIORITY_MEDIUM",
-    "runInChildWindow": false,
+    "runInChildWindow": true,
     "runInChildWindowMode": "DESKTOP"
   },
   "workItemTemplateName": null

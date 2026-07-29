@@ -27,6 +27,8 @@ then expands the `<!-- REPEAT: name -->` blocks and substitutes the {{TOKENS}}.
 Values are HTML-escaped. If any {{TOKEN}} is left unfilled the script exits
 non-zero and names it, so a typo in the payload fails loudly instead of
 shipping a broken report.
+
+V2
 """
 
 from __future__ import annotations

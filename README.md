@@ -1,4 +1,4 @@
-# Automation Anywhere A360 Analysis Skill
+# Automation Anywhere A360 Analysis Skill (V2)
 
 A Claude skill and toolkit for reading, reviewing, scoring, and documenting
 **Automation Anywhere Automation 360 (A360) TaskBots** exported from the

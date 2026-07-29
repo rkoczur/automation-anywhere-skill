@@ -22,6 +22,8 @@ Design notes
 * A dispatch table (PACKAGE, COMMAND) -> formatter handles known commands.
 * Unknown commands fall back to a generic "Package: command k=v k=v" line
   so the script keeps working on new packages you haven't seen before.
+
+  V2
 """
 
 from __future__ import annotations

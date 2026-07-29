@@ -23,8 +23,8 @@
     },
     {
       "id": 2,
-      "prompt": "In the A360 editor this bot shows an error on line 7. Which command node is that, and separately, what does the 'Send' command from the Microsoft 365 Outlook package expect for its attributes?",
-      "expected_output": "Correctly identifies editor line 7 by the depth-first walk (comment=1, step=2, OpenCSVTXT=3, assignToNumber=4, loop=5, Connect=6, Send=7) -> the Outlook 'Send' node (n7-send). Then describes the Send command's attributes (to/from/subject/body/session) drawing on A360_PACKAGES.md.",
+      "prompt": "In the A360 editor this bot shows an error on line 8. Which command node is that, and separately, what does the 'Send' command from the Microsoft 365 Outlook package expect for its attributes?",
+      "expected_output": "Correctly identifies editor line 8 by the depth-first walk (comment=1, step=2, OpenCSVTXT=3, assignToNumber=4, loop=5, Connect=6, Send=7) -> the Outlook 'Send' node (n7-send). Then describes the Send command's attributes (to/from/subject/body/session) drawing on A360_PACKAGES.md.",
       "files": ["fixtures/sample_bot.json"]
     }
   ]

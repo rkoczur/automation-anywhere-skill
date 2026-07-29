@@ -5,5 +5,5 @@
   5  Loop: forEachRowInCSVTXT -> $recCurrentRow$
   6    Microsoft 365 Outlook: Connect
   7    Microsoft 365 Outlook: Send email to  - Subject: "Daily status"
-  8    Number: Assign  to $nbrSentCount$
+  8    Number: Assign  to $nSentCount$
   9  [disabled] MessageBox: messageBox [message="Sent $nbrSentCount$ mails"]

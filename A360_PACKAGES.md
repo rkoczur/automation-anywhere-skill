@@ -6,7 +6,7 @@
 `runTask` shape, credential vault, …). **This document is the *command-level*
 reference**: for each frequently used package, what commands exist, what
 attributes they take, what they return, and how the JSON looks in practice.
-
+V2
 ---
 
 ## 0. Cross-cutting conventions
